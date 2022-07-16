@@ -9,7 +9,9 @@ jobs:
         with:
           node-version: "14"
       - name: Build
-        run: ./build_all.sh
+        run: |
+          chmod +x ./build_all.sh
+          ./build_all.sh
       - name: Deploy
         uses: crazy-max/ghaction-github-pages@v3
         with:
