@@ -7,11 +7,11 @@ copy_dist() {
 
     # Trim "/" from the end of $1
     if [ "${1: -1}" = "/" ]; then
-        echo "[INFO] Trimming '/' from end of $1"
         dir=${1::-1}
     else
         dir=$1
     fi
+
     edit_html ./dist/$dir/index.html
     make_rewrite $dir
 }
@@ -34,6 +34,30 @@ make_rewrite() {
     echo "      }," >> ./dist/vercel.json
 }
 
+edit_package() {
+    # Edit ./package.json, replace "slidev build" with "slidev build --base /$1"
+    # Trim "/" from the end of $1
+    if [ "${1: -1}" = "/" ]; then
+        dir=${1::-1}
+    else
+        dir=$1
+    fi
+    echo "[INFO] Editing $dir/package.json"
+    sed -i 's/"slidev build"/"slidev build --base \/'$dir'\/"/g' ./package.json
+}
+
+recover_package() {
+    # Edit ./package.json, replace "slidev build --base /$1" with "slidev build"
+    # Trim "/" from the end of $1
+    if [ "${1: -1}" = "/" ]; then
+        dir=${1::-1}
+    else
+        dir=$1
+    fi
+    echo "[INFO] Recovering $dir/package.json"
+    sed -i 's/"slidev build --base \/'$dir'\/"/"slidev build"/g' ./package.json
+}
+
 rm -rf ./dist
 
 slides_list=`ls -d */`
@@ -53,7 +77,9 @@ for slides in $slides_list; do
     echo "[INFO] Building $slides"
     cd $slides
     npm install
-    slidev build --base /$slides
+    edit_package $slides
+    npm run build
+    recover_package $slides
     cd ..
     copy_dist $slides
 done
