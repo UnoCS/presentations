@@ -1,29 +1,24 @@
 
 
-copy_assets() {
-    # Copy all files from $1/dist/assets to ./dist/assets
-    echo "Copying assets from $1/dist/assets to ./dist/assets"
-    cp -r $1/dist/assets/* ./dist/assets
-}
+copy_dist() {
+    # Copy all files from $1/dist to ./dist/$1
+    mkdir -p dist/$1
+    cp -r $1/dist/* dist/$1
 
-copy_index() {
-    # Copy $1/dist/index.html to ./dist/index.html
-    echo "Moving index.html from $1dist/index.html to ./dist/$1.html"
     # Trim "/" from the end of $1
     if [ "${1: -1}" = "/" ]; then
-        echo "Trimming '/' from end of $1"
+        echo "[INFO] Trimming '/' from end of $1"
         dir=${1::-1}
     else
         dir=$1
     fi
-    cp $1dist/index.html ./dist/$dir.html
-    edit_index ./dist/$dir.html
+    edit_html ./dist/$dir/index.html
     make_rewrite $dir
 }
 
-edit_index() {
+edit_html() {
     # Edit replace icon to "favicon.ico"
-    echo "Editing $1"
+    echo "[INFO] Editing $1"
     # Original icon is "https://cdn.jsdelivr.net/gh/slidevjs/slidev/assets/favicon.png"
     # New icon is "favicon.ico"
     sed -i 's/https:\/\/cdn.jsdelivr.net\/gh\/slidevjs\/slidev\/assets\/favicon.png/favicon.ico/g' $1
@@ -35,7 +30,7 @@ make_rewrite() {
     # append { "source": "/$1/(.*)", "destination": "/$1.html" } to ./dist/vercel.json
     echo "      {" >> ./dist/vercel.json
     echo "        \"source\": \"/$1/(.*)\"," >> ./dist/vercel.json
-    echo "        \"destination\": \"/$1.html\"" >> ./dist/vercel.json
+    echo "        \"destination\": \"/$1/index.html\"" >> ./dist/vercel.json
     echo "      }," >> ./dist/vercel.json
 }
 
@@ -44,33 +39,30 @@ rm -rf ./dist
 slides_list=`ls -d */`
 
 mkdir -p dist
-mkdir -p dist/assets
 
 # Copy favicon.ico to dist
 cp favicon.ico ./dist/favicon.ico
 
 # Write ./dist/vercel.json
-echo "Writing ./dist/vercel.json"
+echo "[INFO] Writing ./dist/vercel.json"
 echo '{
     "rewrites": [' > ./dist/vercel.json
 
 for slides in $slides_list; do
 
-    echo "Building $slides"
+    echo "[INFO] Building $slides"
     cd $slides
     npm install
-    npm run build
+    slidev build --base /$slides
     cd ..
-    copy_assets $slides
-    copy_index $slides
-
+    copy_dist $slides
 done
 
 # Delete last comma from ./dist/vercel.json
-echo "Deleting last comma from ./dist/vercel.json"
+echo "[INFO] Deleting last comma from ./dist/vercel.json"
 sed -i '$ d' ./dist/vercel.json
 # Append closing brace to ./dist/vercel.json
-echo "Appending closing brace to ./dist/vercel.json"
+echo "[INFO] Appending closing brace to ./dist/vercel.json"
 echo '      }
     ]
 }' >> ./dist/vercel.json
