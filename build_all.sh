@@ -18,6 +18,7 @@ copy_index() {
     fi
     cp $1dist/index.html ./dist/$dir.html
     edit_index ./dist/$dir.html
+    make_rewrite $dir
 }
 
 edit_index() {
@@ -30,6 +31,14 @@ edit_index() {
     sed -i 's/fonts.googleapis.com/google-fonts.mirrors.sjtug.sjtu.edu.cn/g' $1
 }
 
+make_rewrite() {
+    # append { "source": "/$1/(.*)", "destination": "/$1.html" } to ./dist/vercel.json
+    echo "      {" >> ./dist/vercel.json
+    echo "        \"source\": \"/$1/(.*)\"," >> ./dist/vercel.json
+    echo "        \"destination\": \"/$1.html\"" >> ./dist/vercel.json
+    echo "      }," >> ./dist/vercel.json
+}
+
 rm -rf ./dist
 
 slides_list=`ls -d */`
@@ -40,6 +49,11 @@ mkdir -p dist/assets
 # Copy favicon.ico to dist
 cp favicon.ico ./dist/favicon.ico
 
+# Write ./dist/vercel.json
+echo "Writing ./dist/vercel.json"
+echo '{
+    "rewrites": [' > ./dist/vercel.json
+
 for slides in $slides_list; do
 
     echo "Building $slides"
@@ -49,4 +63,14 @@ for slides in $slides_list; do
     cd ..
     copy_assets $slides
     copy_index $slides
+
 done
+
+# Delete last comma from ./dist/vercel.json
+echo "Deleting last comma from ./dist/vercel.json"
+sed -i '$ d' ./dist/vercel.json
+# Append closing brace to ./dist/vercel.json
+echo "Appending closing brace to ./dist/vercel.json"
+echo '      }
+    ]
+}' >> ./dist/vercel.json
