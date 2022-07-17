@@ -1,0 +1,32 @@
+{
+    "rewrites": [
+      {
+        "source": "/1.0-unit-introduction/(.*)",
+        "destination": "/1.0-unit-introduction/index.html"
+      },
+      {
+        "source": "/1.1-exam-structure/(.*)",
+        "destination": "/1.1-exam-structure/index.html"
+      },
+      {
+        "source": "/1.2-vs-cs-principles/(.*)",
+        "destination": "/1.2-vs-cs-principles/index.html"
+      },
+      {
+        "source": "/1.3-mcq-tips/(.*)",
+        "destination": "/1.3-mcq-tips/index.html"
+      },
+      {
+        "source": "/1.4-free-resp-tips/(.*)",
+        "destination": "/1.4-free-resp-tips/index.html"
+      },
+      {
+        "source": "/example/(.*)",
+        "destination": "/example/index.html"
+      },
+      {
+        "source": "/index/(.*)",
+        "destination": "/index/index.html"
+      }
+    ]
+}
