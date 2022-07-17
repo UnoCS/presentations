@@ -82,6 +82,10 @@ for slides in $slides_list; do
     recover_package $slides
     cd ..
     copy_dist $slides
+    # If its name is "index", copy ./dist/index/index.html to ./dist/index.html
+    if [ "$slides" = "index/" ]; then
+        cp ./dist/index/index.html ./dist/index.html
+    fi
 done
 
 # Delete last comma from ./dist/vercel.json
