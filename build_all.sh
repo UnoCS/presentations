@@ -115,9 +115,9 @@ for slides in $slides_list; do
 
     echo "[INFO] Building $slides"
     cd $slides
-    npm install
+    pnpm install
     edit_package $slides
-    npm run build
+    pnpm run build
     recover_package $slides
     cd ..
     copy_dist $slides
