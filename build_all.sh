@@ -22,8 +22,8 @@ edit_html() {
     # Original icon is "https://cdn.jsdelivr.net/gh/slidevjs/slidev/assets/favicon.png"
     # New icon is "favicon.ico"
     sed -i 's/https:\/\/cdn.jsdelivr.net\/gh\/slidevjs\/slidev\/assets\/favicon.png/favicon.ico/g' $1
-    # Replace fonts.googleapis.com/css2?family=Helvetica+Neue:wght@200;400;600&display=swap to /fonts.css
-    sed -i 's/fonts.googleapis.com\/css2?family=Helvetica+Neue:wght@200;400;600&display=swap/fonts.css/g' $1
+    # Replace https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@200;400;600&display=swap to /fonts.css
+    sed -i 's/https:\/\/fonts.googleapis.com\/css2?family=Helvetica+Neue:wght@200;400;600&display=swap/\/fonts.css/g' $1
 }
 
 make_rewrite() {
