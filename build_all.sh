@@ -44,8 +44,6 @@ edit_package() {
     fi
     echo "[INFO] Editing $dir/package.json"
     sed -i 's/"slidev build"/"slidev build --base \/'$dir'\/"/g' ./package.json
-    # fix peer deps
-    echo "auto-install-peers=true" >> ./.npmrc
 }
 
 recover_package() {
@@ -117,6 +115,8 @@ for slides in $slides_list; do
 
     echo "[INFO] Building $slides"
     cd $slides
+    # fix peer deps
+    echo "auto-install-peers=true" >> ./.npmrc
     pnpm install
     edit_package $slides
     pnpm run build
