@@ -44,6 +44,8 @@ edit_package() {
     fi
     echo "[INFO] Editing $dir/package.json"
     sed -i 's/"slidev build"/"slidev build --base \/'$dir'\/"/g' ./package.json
+    # fix peer deps
+    echo "auto-install-peers=true" >> ./.npmrc
 }
 
 recover_package() {
